@@ -114,7 +114,7 @@ clean:
 	rm -rf bin obj
 
 pristine: clean
-	rm -rf lib emsdk
+	rm -rf lib emsdk html doxygen.log lint.log
 
 get-version:
 	@echo $(VER_MAJOR).$(VER_MINOR).$(VER_PATCH)
@@ -126,20 +126,20 @@ lint: lint.log
 	@cat $^
 
 lint.log: $(HEADERS)
-	@find z/ -type f \( -name '*.cpp' -or -name '*.hpp' \) -not -name '*Constructors.hpp' -not -name 'utf*.hpp' -not -name 'ascii.hpp' -not -name 'shared.hpp' | xargs -P8 -I{} clang-tidy {} -header-filter=.* -- -std=c++17 -m64 -W -Wall -Wextra -Wno-psabi -Werror -pedantic -fexceptions -fPIC -fdata-sections -ffunction-sections -O3 -Wno-unused-private-field > lint.log 2>/dev/null || { cat $@; [ "$$(cat $@)" = '' ] && echo 'ERROR: Is clang-tidy installed?' && rm $@ -f; exit 1; }
+	@find src/ -type f \( -name '*.cpp' -or -name '*.hpp' \) | xargs -P8 -I{} clang-tidy {} -header-filter=.* -- -std=$(CPP_STD) $(CFLAGS) > lint.log 2>/dev/null || { cat $@; [ "$$(cat $@)" = '' ] && echo 'ERROR: Is clang-tidy installed?' && rm $@ -f; exit 1; }
 
 format:
-	find . -type f \( -name '*.cpp' -or -name '*.hpp' \) -not -name 'catch_amalgamated.*' | xargs -P8 -I{} sh -c 'echo Formatting {}; clang-format -i {}'
+	find src/ -type f \( -name '*.cpp' -or -name '*.hpp' \) -not -name 'catch_amalgamated.*' | xargs -P8 -I{} sh -c 'echo Formatting {}; clang-format -i {}'
 
 try-format:
-	@find . -type f \( -name '*.cpp' -or -name '*.hpp' \) -not -name 'catch_amalgamated.*' | xargs -P8 -I{} sh -c 'clang-format --dry-run -Werror -i {}'
+	@find src/ -type f \( -name '*.cpp' -or -name '*.hpp' \) -not -name 'catch_amalgamated.*' | xargs -P8 -I{} sh -c 'clang-format --dry-run -Werror -i {}'
 
 dox: docs
 docs: html
 	@cat doxygen.log
 
-html: $(HEADERS) Doxyfile $(wildcard Doxypages/*.dox) Doxypages/examples.dox $(wildcard examples/src/*.cpp) README.md
-	$(RMDIR) html
+html: $(HEADERS) Doxyfile $(wildcard examples/src/*.cpp) README.md
+	rm -rf html
 	PROJECT_NUMBER=$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH) doxygen
 
 count-loc:
