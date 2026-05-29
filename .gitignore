@@ -72,3 +72,5 @@ Testing/
 bin/
 lib/
 obj/
+html/
+emsdk/

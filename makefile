@@ -4,6 +4,7 @@ VER_MINOR = 0
 VER_CUTOFF_COMMIT = fee7068e379deafd8b33d76be17acb4f8846db29
 
 RAYLIB_VER = 6.0
+CPP_STD = c++20
 
 TARGET = linux_amd64
 VALID_TARGETS := webassembly linux_amd64
@@ -14,9 +15,9 @@ RLBIN = $(RLDIR)/lib/libraylib.a
 
 CC = g++
 LFLAGS = $(RLDIR)/lib/libraylib.a -lGL -lm -lpthread -ldl -lrt -lX11
-CFLAGS = -I$(RLDIR)/include -std=c++20
-
-OBJECTS = obj/main.o
+CFLAGS = -I$(RLDIR)/include -std=$(CPP_STD) \
+	-W -Wall -Wextra -Werror \
+	-pedantic -fexceptions
 
 # Make sure the build target is valid
 ifeq (,$(findstring $(TARGET) , $(VALID_TARGETS) ))
@@ -26,6 +27,29 @@ endif
 #########################################
 # Calculated compiler/linker flags
 #########################################
+
+#Try to compile for our specific architecture
+ifneq (,$(findstring mingw,$(CC)))
+OS = Windows_NT
+endif
+
+ARCH = $(shell $(CC) -dumpmachine)
+
+BITS =
+ifeq ($(findstring x86_64,$(ARCH)),x86_64)
+BITS = 64
+else
+ifeq ($(findstring i686,$(ARCH)),i686)
+BITS = 32
+endif
+endif
+ifeq ($(BITS),)
+CCTARGET =
+else
+CCTARGET = -m$(BITS)
+endif
+
+CFLAGS += $(CCTARGET)
 
 ifneq (,$(findstring $(TARGET),webassembly))
 # Calculate flags for webassembly target
@@ -67,11 +91,19 @@ else
 VER_PATCH = $(shell git rev-list --count $(VER_CUTOFF_COMMIT)..HEAD^)
 endif
 
+D0 = $(sort $(dir $(wildcard src/*/)))
+D1 = $(sort $(dir $(wildcard $(D0)*/)))
+DIRS := $(sort $(dir $(wildcard $(D1)*/)) $(D0) $(D1) )
+SRCS := $(wildcard $(addsuffix *.cpp, $(DIRS)))
+HEADERS := $(wildcard $(addsuffix *.hpp, $(DIRS))) $(wildcard src/*.hpp)
+OBJS := $(patsubst src/%.cpp,obj/%.o,$(SRCS))
+DEPENDS := $(patsubst src/%.cpp,obj/%.d,$(SRCS))
+
 #########################################
-# Phony rules
+# Phony rules and documentation
 #########################################
 
-.PHONY: main clean pristine get-version get-revision
+.PHONY: main clean pristine get-version get-revision format try-format dox docs count-loc
 
 main: $(BINARY) $(RLDIR)
 
@@ -87,22 +119,45 @@ get-version:
 get-revision:
 	git rev-parse HEAD
 
+lint: lint.log
+	@cat $^
+
+lint.log: $(HEADERS)
+	@find z/ -type f \( -name '*.cpp' -or -name '*.hpp' \) -not -name '*Constructors.hpp' -not -name 'utf*.hpp' -not -name 'ascii.hpp' -not -name 'shared.hpp' | xargs -P8 -I{} clang-tidy {} -header-filter=.* -- -std=c++17 -m64 -W -Wall -Wextra -Wno-psabi -Werror -pedantic -fexceptions -fPIC -fdata-sections -ffunction-sections -O3 -Wno-unused-private-field > lint.log 2>/dev/null || { cat $@; [ "$$(cat $@)" = '' ] && echo 'ERROR: Is clang-tidy installed?' && rm $@ -f; exit 1; }
+
+format:
+	find . -type f \( -name '*.cpp' -or -name '*.hpp' \) -not -name 'catch_amalgamated.*' | xargs -P8 -I{} sh -c 'echo Formatting {}; clang-format -i {}'
+
+try-format:
+	@find . -type f \( -name '*.cpp' -or -name '*.hpp' \) -not -name 'catch_amalgamated.*' | xargs -P8 -I{} sh -c 'clang-format --dry-run -Werror -i {}'
+
+dox: docs
+docs: html
+	@cat doxygen.log
+
+html: $(HEADERS) Doxyfile $(wildcard Doxypages/*.dox) Doxypages/examples.dox $(wildcard examples/src/*.cpp) README.md
+	$(RMDIR) html
+	PROJECT_NUMBER=$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH) doxygen
+
+count-loc:
+	@find src -type f \( -name "*.cpp" -o -name "*.hpp" \) -exec wc -l {} +
+
 #########################################
 # Actual rules
 #########################################
 
 # Web build
-bin/$(NAME).html: $(OBJECTS) | bin/$(NAME).js
+bin/$(NAME).html: $(OBJS) | bin/$(NAME).js
 	$(CC) -o $@ $^ $(LFLAGS)
 
-bin/$(NAME).js: $(OBJECTS) | bin/$(NAME).wasm
+bin/$(NAME).js: $(OBJS) | bin/$(NAME).wasm
 	$(CC) -o $@ $^ $(LFLAGS)
 
-bin/$(NAME).wasm: $(OBJECTS) $(RLBIN) | bin
+bin/$(NAME).wasm: $(OBJS) $(RLBIN) | bin
 	$(CC) -o $@ $^ $(LFLAGS)
 
 # Linux build
-bin/$(NAME): $(OBJECTS) $(RLBIN) | bin
+bin/$(NAME): $(OBJS) $(RLBIN) | bin
 	$(CC) -o $@ $^ $(LFLAGS)
 
 # Objects
