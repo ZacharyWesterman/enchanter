@@ -108,9 +108,6 @@ DEPENDS := $(patsubst src/%.cpp,obj/%.d,$(SRCS))
 
 .PHONY: main clean pristine get-version get-revision format try-format dox docs count-loc
 
-# test:
-# 	echo $(BINARY) $(RLDIR)
-
 main: $(BINARY) $(RLDIR)
 
 clean:
