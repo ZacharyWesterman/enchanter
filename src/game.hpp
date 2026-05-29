@@ -1,11 +1,10 @@
 namespace enchanter {
 
 class game {
-	void draw();
-
 public:
 	game();
 	void run();
+	void draw();
 };
 
 } // namespace enchanter

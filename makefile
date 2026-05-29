@@ -28,11 +28,12 @@ endif
 # Calculated compiler/linker flags
 #########################################
 
-#Try to compile for our specific architecture
+ifeq (,$(findstring $(TARGET),webassembly))
+# If not compiling for web, then try to
+# compile for our specific architecture.
 ifneq (,$(findstring mingw,$(CC)))
 OS = Windows_NT
 endif
-
 ARCH = $(shell $(CC) -dumpmachine)
 
 BITS =
@@ -43,6 +44,7 @@ ifeq ($(findstring i686,$(ARCH)),i686)
 BITS = 32
 endif
 endif
+
 ifeq ($(BITS),)
 CCTARGET =
 else
@@ -50,6 +52,7 @@ CCTARGET = -m$(BITS)
 endif
 
 CFLAGS += $(CCTARGET)
+endif
 
 ifneq (,$(findstring $(TARGET),webassembly))
 # Calculate flags for webassembly target
@@ -104,6 +107,9 @@ DEPENDS := $(patsubst src/%.cpp,obj/%.d,$(SRCS))
 #########################################
 
 .PHONY: main clean pristine get-version get-revision format try-format dox docs count-loc
+
+# test:
+# 	echo $(BINARY) $(RLDIR)
 
 main: $(BINARY) $(RLDIR)
 
@@ -164,7 +170,7 @@ bin/$(NAME): $(OBJS) $(RLBIN) | bin
 obj/main.o: src/main.cpp | obj $(RLDIR)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
-obj/%.o: src/%.cpp src/%.hpp | obj
+obj/%.o: src/%.cpp src/%.hpp | obj $(RLDIR)
 	$(CC) $(CFLAGS) -o $@ -c $<
 
 # Raylib rules.
