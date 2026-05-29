@@ -129,16 +129,16 @@ lint.log: $(HEADERS)
 	@find src/ -type f \( -name '*.cpp' -or -name '*.hpp' \) | xargs -P8 -I{} clang-tidy {} -header-filter=.* -- -std=$(CPP_STD) $(CFLAGS) > lint.log 2>/dev/null || { cat $@; [ "$$(cat $@)" = '' ] && echo 'ERROR: Is clang-tidy installed?' && rm $@ -f; exit 1; }
 
 format:
-	find src/ -type f \( -name '*.cpp' -or -name '*.hpp' \) -not -name 'catch_amalgamated.*' | xargs -P8 -I{} sh -c 'echo Formatting {}; clang-format -i {}'
+	find src/ -type f \( -name '*.cpp' -or -name '*.hpp' \) | xargs -P8 -I{} sh -c 'echo Formatting {}; clang-format -i {}'
 
 try-format:
-	@find src/ -type f \( -name '*.cpp' -or -name '*.hpp' \) -not -name 'catch_amalgamated.*' | xargs -P8 -I{} sh -c 'clang-format --dry-run -Werror -i {}'
+	@find src/ -type f \( -name '*.cpp' -or -name '*.hpp' \) | xargs -P8 -I{} sh -c 'clang-format --dry-run -Werror -i {}'
 
 dox: docs
 docs: html
 	@cat doxygen.log
 
-html: $(HEADERS) Doxyfile $(wildcard examples/src/*.cpp) README.md
+html: $(HEADERS) Doxyfile README.md
 	rm -rf html
 	PROJECT_NUMBER=$(VER_MAJOR).$(VER_MINOR).$(VER_PATCH) doxygen
 
