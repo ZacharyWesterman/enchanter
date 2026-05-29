@@ -5,8 +5,8 @@
 #include <emscripten/emscripten.h>
 #endif
 
-static int screenWidth = 1920;
-static int screenHeight = 1080;
+static int screenWidth = 800;
+static int screenHeight = 600;
 
 #ifdef PLATFORM_WEB
 static enchanter::game *main_game = nullptr;
@@ -21,7 +21,17 @@ namespace enchanter {
 game::game() {}
 
 void game::run() {
-	InitWindow(screenWidth, screenHeight, "Enchanter");
+	const auto appName =
+#ifdef DEBUG
+		"Enchanter [Debug Build]"
+#else
+		"Enchanter"
+#endif
+		;
+
+	InitWindow(screenWidth, screenHeight, appName);
+	SetWindowState(FLAG_WINDOW_RESIZABLE);
+	SetWindowMinSize(640, 480);
 
 #ifdef PLATFORM_WEB
 	main_game = this;
@@ -38,9 +48,14 @@ void game::run() {
 }
 
 void game::draw() {
+	// Don't render to the screen if not focused.
+	if (!IsWindowFocused()) {
+		return;
+	}
+
 	BeginDrawing();
 
-	ClearBackground(RAYWHITE);
+	ClearBackground(DARKGRAY);
 	DrawText("Hello World!", 190, 200, 20, LIGHTGRAY);
 
 	EndDrawing();
