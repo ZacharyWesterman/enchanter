@@ -14,7 +14,7 @@ otherwise you are pretty much guaranteed to get compilation errors!
 
 - If building for linux, just run `make` or `make TARGET=linux_amd64` and then you can run `./bin/enchanter`.
 - If building for web, run `./webenv.sh` and then
-  - If you want a debug html page, run `make TARGET=webassembly DEBUG=true`, and then run `emrun bin/enchanter.html`.
+  - If you want a debug html page, run `make TARGET=webassembly DEBUG=1`, and then run `emrun bin/enchanter.html`.
   - If you don't need the debug page, run `make TARGET=webassembly`.
 
 # Cleanup (optional)
