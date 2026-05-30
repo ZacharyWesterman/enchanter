@@ -112,7 +112,6 @@ DEPENDS := $(patsubst src/%.cpp,obj/%.d,$(SRCS))
 main: $(BINARY) $(RLDIR)
 
 clean:
-	echo $(OBJDIRS)
 	rm -rf bin obj
 
 pristine: clean
@@ -163,7 +162,6 @@ bin/$(NAME).wasm: $(OBJS) $(RLBIN) | bin
 
 # Linux build
 bin/$(NAME): $(OBJS) $(RLBIN) | bin
-	echo $(OBJS)
 	$(CC) -o $@ $^ $(LFLAGS)
 
 # Objects

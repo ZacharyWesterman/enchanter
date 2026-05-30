@@ -75,6 +75,8 @@ void game::update() {
 
 		auto scroll = GetMouseWheelMove();
 		if (std::abs(scroll) > 0.1) {
+			// Current bug: zoom is always focused on the world origin.
+			// Needs to be focused on the screen center!
 			game_world.scale_factor = std::min(10, std::max(-10, game_world.scale_factor + (scroll > 0 ? 1 : -1)));
 			game_world.scale = std::pow(2, game_world.scale_factor / 2.f);
 		}
