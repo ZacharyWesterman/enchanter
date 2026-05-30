@@ -94,15 +94,11 @@ void game::draw() const {
 
 	ClearBackground(DARKGRAY);
 
-	int center_x = game_world.x;
-	int center_y = game_world.y;
-
-	// DrawCircle(center_x, center_y, 10 * std::pow(2, scale / 2.f), LIGHTGRAY);
 	for (auto e : entities) {
 		e->draw(game_world);
 	}
 
-	DrawText("Hello World!", center_x, center_y + 20, 20, LIGHTGRAY);
+	DrawText("Hello World!", 0, 40, 20, LIGHTGRAY);
 
 	EndDrawing();
 }
