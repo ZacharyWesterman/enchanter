@@ -75,10 +75,19 @@ void game::update() {
 
 		auto scroll = GetMouseWheelMove();
 		if (std::abs(scroll) > 0.1) {
-			// Current bug: zoom is always focused on the world origin.
-			// Needs to be focused on the screen center!
-			game_world.scale_factor = std::min(10, std::max(-10, game_world.scale_factor + (scroll > 0 ? 1 : -1)));
+			int scale_sign = scroll >= 0 ? 1 : -1;
+
+			auto old_x = game_world.get_world_x(GetRenderWidth() / 2);
+			auto old_y = game_world.get_world_y(GetRenderHeight() / 2);
+
+			game_world.scale_factor = std::min(10, std::max(-10, game_world.scale_factor + scale_sign));
 			game_world.scale = std::pow(2, game_world.scale_factor / 2.f);
+
+			auto new_x = game_world.get_world_x(GetRenderWidth() / 2);
+			auto new_y = game_world.get_world_y(GetRenderHeight() / 2);
+
+			game_world.x -= (old_x - new_x) * game_world.scale;
+			game_world.y -= (old_y - new_y) * game_world.scale;
 		}
 	}
 }
@@ -100,7 +109,8 @@ void game::draw() const {
 		e->draw(game_world);
 	}
 
-	DrawText("Hello World!", 0, 40, 20, LIGHTGRAY);
+	DrawLine(GetRenderWidth() / 2, GetRenderHeight() / 2 - 20, GetRenderWidth() / 2, GetRenderHeight() / 2 + 20, RAYWHITE);
+	DrawLine(GetRenderWidth() / 2 - 20, GetRenderHeight() / 2, GetRenderWidth() / 2 + 20, GetRenderHeight() / 2, RAYWHITE);
 
 	EndDrawing();
 }
