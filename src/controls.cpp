@@ -1,9 +1,7 @@
 #include "controls.hpp"
 #include <raylib.h>
 
-namespace controls {
-
-namespace mouse {
+namespace controls::mouse {
 
 bool left() {
 	return IsMouseButtonDown(0);
@@ -18,6 +16,4 @@ bool in_screen() {
 	return pos.x >= 0 && pos.x <= GetRenderWidth() && pos.y >= 0 && pos.y <= GetRenderHeight();
 }
 
-} // namespace mouse
-
-} // namespace controls
+} // namespace controls::mouse

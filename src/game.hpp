@@ -1,5 +1,8 @@
 #pragma once
 
+#include "entities/entity.hpp"
+#include <vector>
+
 namespace enchanter {
 
 /**
@@ -8,10 +11,15 @@ namespace enchanter {
 class game {
 	int pos_x = 0;
 	int pos_y = 0;
+	int scale = 0;
+
+	std::vector<entity *> entities;
 
 public:
 	/// @brief Load any files and perform any setup needed before launching.
 	game();
+
+	~game();
 
 	void update();
 
@@ -23,7 +31,7 @@ public:
 	/**
 	 * @brief Render a single frame to the window.
 	 */
-	void draw();
+	void draw() const;
 };
 
 } // namespace enchanter

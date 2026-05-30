@@ -1,5 +1,7 @@
 #include "game.hpp"
 #include "controls.hpp"
+#include "entities/circle.hpp"
+#include <cmath>
 #include <raylib.h>
 
 #if defined(PLATFORM_WEB)
@@ -18,11 +20,18 @@ static void run_main_loop() {
 
 namespace enchanter {
 
-// Later this will set up data, but for now, nothing.
-game::game() {}
+game::game() {
+	entities.push_back(new circle(0, 0, 20, ORANGE));
+}
+
+game::~game() {
+	for (auto e : entities) {
+		delete e;
+	}
+}
 
 void game::run() {
-	const auto appName =
+	const auto app_name =
 #ifdef DEBUG
 		"Enchanter [Debug Build]"
 #else
@@ -30,7 +39,7 @@ void game::run() {
 #endif
 		;
 
-	InitWindow(screenWidth, screenHeight, appName);
+	InitWindow(screenWidth, screenHeight, app_name);
 	SetWindowState(FLAG_WINDOW_RESIZABLE);
 	SetWindowMinSize(640, 480);
 
@@ -55,14 +64,21 @@ void game::update() {
 		return;
 	}
 
-	if (controls::mouse::left() && controls::mouse::in_screen()) {
-		auto delta = GetMouseDelta();
-		pos_x += delta.x;
-		pos_y += delta.y;
+	if (controls::mouse::in_screen()) {
+		if (controls::mouse::right()) {
+			auto delta = GetMouseDelta();
+			pos_x += delta.x;
+			pos_y += delta.y;
+		}
+
+		auto scroll = GetMouseWheelMove();
+		if (std::abs(scroll) > 0.1) {
+			scale = std::min(10, std::max(-10, scale + (scroll > 0 ? 1 : -1)));
+		}
 	}
 }
 
-void game::draw() {
+void game::draw() const {
 	// Don't render anything to the screen if not focused.
 	// Just update and return.
 	if (!IsWindowFocused()) {
@@ -78,7 +94,10 @@ void game::draw() {
 	int center_x = GetRenderWidth() / 2 + pos_x;
 	int center_y = GetRenderHeight() / 2 + pos_y;
 
-	DrawCircle(center_x, center_y, 10, LIGHTGRAY);
+	// DrawCircle(center_x, center_y, 10 * std::pow(2, scale / 2.f), LIGHTGRAY);
+	for (auto e : entities) {
+		e->draw();
+	}
 
 	DrawText("Hello World!", center_x, center_y + 20, 20, LIGHTGRAY);
 

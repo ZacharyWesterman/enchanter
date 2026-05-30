@@ -1,13 +1,9 @@
 #pragma once
 
-namespace controls {
-
-namespace mouse {
+namespace controls::mouse {
 
 bool left();
 bool right();
 bool in_screen();
 
-} // namespace mouse
-
-} // namespace controls
+} // namespace controls::mouse
