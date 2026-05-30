@@ -7,8 +7,8 @@ circle::circle(int x, int y, float radius, Color color) : entity(x, y), radius(r
 
 void circle::update() {}
 
-void circle::draw() const {
-	DrawCircle(x, y, radius, color);
+void circle::draw(const world &world) const {
+	DrawCircle(world.get_x(x), world.get_y(y), radius * world.scale, color);
 }
 
 } // namespace enchanter

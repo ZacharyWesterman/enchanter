@@ -12,7 +12,7 @@ struct circle : public entity {
 	circle(int x, int y, float radius, Color color);
 
 	void update() override;
-	void draw() const override;
+	void draw(const world &game_world) const override;
 };
 
 } // namespace enchanter

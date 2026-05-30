@@ -1,6 +1,7 @@
 #pragma once
 
 #include "entities/entity.hpp"
+#include "world.hpp"
 #include <vector>
 
 namespace enchanter {
@@ -9,9 +10,7 @@ namespace enchanter {
  * @brief The main game loop.
  */
 class game {
-	int pos_x = 0;
-	int pos_y = 0;
-	int scale = 0;
+	world game_world;
 
 	std::vector<entity *> entities;
 

@@ -1,6 +1,7 @@
 #include "game.hpp"
 #include "controls.hpp"
 #include "entities/circle.hpp"
+#include "world.hpp"
 #include <cmath>
 #include <raylib.h>
 
@@ -20,8 +21,9 @@ static void run_main_loop() {
 
 namespace enchanter {
 
-game::game() {
-	entities.push_back(new circle(0, 0, 20, ORANGE));
+game::game() : game_world(0, 0, 0) {
+	entities.push_back(new circle(-30, 0, 20, ORANGE));
+	entities.push_back(new circle(30, 0, 20, LIME));
 }
 
 game::~game() {
@@ -67,13 +69,14 @@ void game::update() {
 	if (controls::mouse::in_screen()) {
 		if (controls::mouse::right()) {
 			auto delta = GetMouseDelta();
-			pos_x += delta.x;
-			pos_y += delta.y;
+			game_world.x += delta.x;
+			game_world.y += delta.y;
 		}
 
 		auto scroll = GetMouseWheelMove();
 		if (std::abs(scroll) > 0.1) {
-			scale = std::min(10, std::max(-10, scale + (scroll > 0 ? 1 : -1)));
+			game_world.scale_factor = std::min(10, std::max(-10, game_world.scale_factor + (scroll > 0 ? 1 : -1)));
+			game_world.scale = std::pow(2, game_world.scale_factor / 2.f);
 		}
 	}
 }
@@ -91,12 +94,12 @@ void game::draw() const {
 
 	ClearBackground(DARKGRAY);
 
-	int center_x = GetRenderWidth() / 2 + pos_x;
-	int center_y = GetRenderHeight() / 2 + pos_y;
+	int center_x = game_world.x;
+	int center_y = game_world.y;
 
 	// DrawCircle(center_x, center_y, 10 * std::pow(2, scale / 2.f), LIGHTGRAY);
 	for (auto e : entities) {
-		e->draw();
+		e->draw(game_world);
 	}
 
 	DrawText("Hello World!", center_x, center_y + 20, 20, LIGHTGRAY);
