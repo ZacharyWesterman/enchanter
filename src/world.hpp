@@ -1,18 +1,27 @@
 #pragma once
+#include "entities/entity.hpp"
+#include <raylib.h>
+#include <vector>
 
 namespace enchanter {
 
 struct world {
-	int x = 0;
-	int y = 0;
+	Camera2D camera;
+	bool initialized = false;
 	int scale_factor = 0;
-	float scale = 1.f;
 
-	int get_x(int x) const;
-	int get_y(int y) const;
+	std::vector<entity *> entities;
 
-	int get_world_x(int screen_x) const;
-	int get_world_y(int screen_y) const;
+	world();
+	~world();
+
+	void init();
+
+	void zoom(int step);
+	void pan(float x, float y);
+
+	void update();
+	void draw() const;
 };
 
 } // namespace enchanter

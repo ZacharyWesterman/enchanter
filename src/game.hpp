@@ -1,8 +1,6 @@
 #pragma once
 
-#include "entities/entity.hpp"
 #include "world.hpp"
-#include <vector>
 
 namespace enchanter {
 
@@ -12,14 +10,7 @@ namespace enchanter {
 class game {
 	world game_world;
 
-	std::vector<entity *> entities;
-
 public:
-	/// @brief Load any files and perform any setup needed before launching.
-	game();
-
-	~game();
-
 	void update();
 
 	/**

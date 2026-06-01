@@ -1,22 +1,58 @@
 #include "world.hpp"
+#include "entities/circle.hpp"
+#include <cmath>
 #include <raylib.h>
 
 namespace enchanter {
 
-int world::get_x(int world_x) const {
-	return GetRenderWidth() / 2 + x + world_x * scale;
+world::world() {
+	entities.push_back(new circle(-30, 0, 20, ORANGE));
+	entities.push_back(new circle(30, 0, 20, LIME));
 }
 
-int world::get_y(int world_y) const {
-	return GetRenderHeight() / 2 + y + world_y * scale;
+world::~world() {
+	for (auto e : entities) {
+		delete e;
+	}
 }
 
-int world::get_world_x(int screen_x) const {
-	return (screen_x - GetRenderWidth() / 2 - x) / scale;
+void world::init() {
+	initialized = true;
+	camera.offset = {GetRenderWidth() / 2.f, GetRenderHeight() / 2.f};
+	camera.rotation = 0.f;
+	camera.target = {0.f, 0.f};
+	camera.zoom = 1.f;
+	scale_factor = 0;
 }
 
-int world::get_world_y(int screen_y) const {
-	return (screen_y - GetRenderHeight() / 2 - y) / scale;
+void world::zoom(int step) {
+	scale_factor = std::min(10, std::max(-10, scale_factor + step));
+	camera.zoom = std::pow(2, scale_factor / 2.f);
+}
+
+void world::pan(float x, float y) {
+	camera.target.x -= x / camera.zoom;
+	camera.target.y -= y / camera.zoom;
+}
+
+void world::update() {
+	if (!initialized) {
+		init();
+	}
+
+	for (auto e : entities) {
+		e->update();
+	}
+}
+
+void world::draw() const {
+	BeginMode2D(camera);
+
+	for (auto e : entities) {
+		e->draw();
+	}
+
+	EndMode2D();
 }
 
 } // namespace enchanter

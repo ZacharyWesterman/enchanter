@@ -1,6 +1,5 @@
 #include "game.hpp"
 #include "controls.hpp"
-#include "entities/circle.hpp"
 #include "world.hpp"
 #include <cmath>
 #include <raylib.h>
@@ -20,17 +19,6 @@ static void run_main_loop() {
 #endif
 
 namespace enchanter {
-
-game::game() : game_world(0, 0, 0) {
-	entities.push_back(new circle(-30, 0, 20, ORANGE));
-	entities.push_back(new circle(30, 0, 20, LIME));
-}
-
-game::~game() {
-	for (auto e : entities) {
-		delete e;
-	}
-}
 
 void game::run() {
 	const auto app_name =
@@ -69,27 +57,16 @@ void game::update() {
 	if (controls::mouse::in_screen()) {
 		if (controls::mouse::right()) {
 			auto delta = GetMouseDelta();
-			game_world.x += delta.x;
-			game_world.y += delta.y;
+			game_world.pan(delta.x, delta.y);
 		}
 
 		auto scroll = GetMouseWheelMove();
 		if (std::abs(scroll) > 0.1) {
-			int scale_sign = scroll >= 0 ? 1 : -1;
-
-			auto old_x = game_world.get_world_x(GetRenderWidth() / 2);
-			auto old_y = game_world.get_world_y(GetRenderHeight() / 2);
-
-			game_world.scale_factor = std::min(10, std::max(-10, game_world.scale_factor + scale_sign));
-			game_world.scale = std::pow(2, game_world.scale_factor / 2.f);
-
-			auto new_x = game_world.get_world_x(GetRenderWidth() / 2);
-			auto new_y = game_world.get_world_y(GetRenderHeight() / 2);
-
-			game_world.x -= (old_x - new_x) * game_world.scale;
-			game_world.y -= (old_y - new_y) * game_world.scale;
+			game_world.zoom(scroll >= 0 ? 1 : -1);
 		}
 	}
+
+	game_world.update();
 }
 
 void game::draw() const {
@@ -105,9 +82,7 @@ void game::draw() const {
 
 	ClearBackground(DARKGRAY);
 
-	for (auto e : entities) {
-		e->draw(game_world);
-	}
+	game_world.draw();
 
 	DrawLine(GetRenderWidth() / 2, GetRenderHeight() / 2 - 20, GetRenderWidth() / 2, GetRenderHeight() / 2 + 20, RAYWHITE);
 	DrawLine(GetRenderWidth() / 2 - 20, GetRenderHeight() / 2, GetRenderWidth() / 2 + 20, GetRenderHeight() / 2, RAYWHITE);
