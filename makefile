@@ -96,7 +96,8 @@ endif
 
 D0 = $(sort $(dir $(wildcard src/*/)))
 D1 = $(sort $(dir $(wildcard $(D0)*/)))
-DIRS := $(sort $(D0) $(D1) src/ )
+D2 = $(sort $(dir $(wildcard $(D1)*/)))
+DIRS := $(sort $(D0) $(D1) $(D2) src/ )
 SRCS := $(wildcard $(addsuffix *.cpp, $(DIRS)))
 HEADERS := $(wildcard $(addsuffix *.hpp, $(DIRS))) $(wildcard src/*.hpp)
 OBJS := $(patsubst src/%.cpp,obj/%.o,$(SRCS))

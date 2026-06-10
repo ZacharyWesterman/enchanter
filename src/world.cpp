@@ -1,13 +1,12 @@
 #include "world.hpp"
-#include "entities/circle.hpp"
+#include "entities/glyphs/input.hpp"
 #include <cmath>
 #include <raylib.h>
 
 namespace enchanter {
 
 world::world() {
-	entities.push_back(new circle(-30, 0, 20, ORANGE));
-	entities.push_back(new circle(30, 0, 20, LIME));
+	entities.push_back(new glyph::input(0, 0));
 }
 
 world::~world() {

@@ -2,7 +2,7 @@
 
 namespace enchanter {
 
-entity::entity(int x, int y) : x(x), y(y) {}
+entity::entity(float x, float y) : x(x), y(y) {}
 
 entity::~entity() {}
 

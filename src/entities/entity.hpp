@@ -3,10 +3,10 @@
 namespace enchanter {
 
 struct entity {
-	int x;
-	int y;
+	float x;
+	float y;
 
-	entity(int x, int y);
+	entity(float x, float y);
 	virtual ~entity();
 
 	virtual void update() = 0;
