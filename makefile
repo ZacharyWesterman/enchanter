@@ -4,7 +4,7 @@ VER_MINOR = 0
 VER_CUTOFF_COMMIT = fee7068e379deafd8b33d76be17acb4f8846db29
 
 RAYLIB_VER = 6.0
-CPP_STD = gnu++20
+CPP_STD = gnu++23
 
 TARGET = linux_amd64
 VALID_TARGETS := webassembly linux_amd64
