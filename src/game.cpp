@@ -14,6 +14,7 @@ static int screenHeight = 600;
 #ifdef PLATFORM_WEB
 static enchanter::game *main_game = nullptr;
 static void run_main_loop() {
+	main_game->update();
 	main_game->draw();
 }
 #endif
