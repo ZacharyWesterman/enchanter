@@ -1,4 +1,4 @@
-#include "input.hpp"
+#include "wire.hpp"
 #include <raylib.h>
 
 #define NONE_ANY {affinity::NONE, 0}
@@ -7,6 +7,6 @@
 
 namespace enchanter::glyph {
 
-input::input(position pos) : glyph(pos, ORANGE, "glyph::input", {NONE_ANY, NONE_ANY, NONE_ANY, OUT_ANY, NONE_ANY, NONE_ANY}) {}
+wire::wire(position pos) : glyph(pos, RAYWHITE, "glyph::wire", {IN_ANY, NONE_ANY, NONE_ANY, OUT_ANY, NONE_ANY, NONE_ANY}) {}
 
 } // namespace enchanter::glyph

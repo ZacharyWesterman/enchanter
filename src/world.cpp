@@ -1,12 +1,16 @@
 #include "world.hpp"
 #include "entities/glyphs/input.hpp"
+#include "entities/glyphs/output.hpp"
+#include "entities/glyphs/wire.hpp"
 #include <cmath>
 #include <raylib.h>
 
 namespace enchanter {
 
 world::world() {
-	entities.push_back(new glyph::input({0, 0}));
+	entities.push_back(new glyph::input({0, -130}));
+	entities.push_back(new glyph::wire({0, 0}));
+	entities.push_back(new glyph::output({0, 130}));
 }
 
 world::~world() {

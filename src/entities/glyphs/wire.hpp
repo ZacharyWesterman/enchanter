@@ -4,8 +4,8 @@
 
 namespace enchanter::glyph {
 
-struct input : public glyph {
-	input(position pos);
+struct wire : public glyph {
+	wire(position pos);
 };
 
 } // namespace enchanter::glyph

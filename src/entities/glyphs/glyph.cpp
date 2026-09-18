@@ -41,10 +41,10 @@ void glyph::draw() const {
 		int arrow_radius = 10;
 		float x = sin(angle) * distance;
 		float y = cos(angle) * distance;
-		DrawPoly({x, y}, 3, arrow_radius, rotation, col);
+		DrawPoly({x + pos.x, y + pos.y}, 3, arrow_radius, rotation, col);
 
 		// I/O amount
-		DrawText(std::to_string(io[i].intensity).c_str(), x, y, 10, BLACK);
+		DrawText(std::to_string(io[i].intensity).c_str(), x + pos.x, y + pos.y, 10, BLACK);
 	}
 
 	// Name
