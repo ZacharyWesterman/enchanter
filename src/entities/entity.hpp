@@ -1,12 +1,13 @@
 #pragma once
 
+#include "../types/position.hpp"
+
 namespace enchanter {
 
 struct entity {
-	float x;
-	float y;
+	position pos;
 
-	entity(float x, float y);
+	entity(position pos);
 	virtual ~entity();
 
 	virtual void update() = 0;

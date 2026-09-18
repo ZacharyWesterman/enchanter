@@ -1,21 +1,13 @@
 #include "input.hpp"
+#include <cmath>
 #include <raylib.h>
+
+#define NONE_ANY {affinity::NONE, 0}
+#define OUT_ANY {affinity::NONE, -1}
+#define IN_ANY {affinity::NONE, 1}
 
 namespace enchanter::glyph {
 
-void input::update() {}
-
-void input::draw() const {
-	// Outline
-	DrawPolyLinesEx({x, y}, 6, 75, 0, 5, YELLOW);
-
-	// Input arrow
-	DrawPoly({x, y - 50}, 3, 10, -30, YELLOW);
-
-	int font_size = 20;
-	auto name = "glyph::input";
-	auto width = MeasureText(name, font_size);
-	DrawText(name, x - width / 2, y - font_size / 2, font_size, YELLOW);
-}
+input::input(position pos) : glyph(pos, YELLOW, "glyph::input", {NONE_ANY, NONE_ANY, NONE_ANY, OUT_ANY, NONE_ANY, NONE_ANY}) {}
 
 } // namespace enchanter::glyph

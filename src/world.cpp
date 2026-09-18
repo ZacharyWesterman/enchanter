@@ -6,7 +6,7 @@
 namespace enchanter {
 
 world::world() {
-	entities.push_back(new glyph::input(0, 0));
+	entities.push_back(new glyph::input({0, 0}));
 }
 
 world::~world() {

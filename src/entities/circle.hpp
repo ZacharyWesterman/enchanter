@@ -9,7 +9,7 @@ struct circle : public entity {
 	float radius;
 	Color color;
 
-	circle(int x, int y, float radius, Color color);
+	circle(position pos, float radius, Color color);
 
 	void update() override;
 	void draw() const override;

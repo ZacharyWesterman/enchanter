@@ -1,15 +1,12 @@
 #pragma once
 
 #include "../../types/mana.hpp"
-#include "glyph_base.hpp"
+#include "glyph.hpp"
 
 namespace enchanter::glyph {
 
-struct input : public glyph_base {
-	using glyph_base::glyph_base;
-
-	void update() override;
-	void draw() const override;
+struct input : public glyph {
+	input(position pos);
 };
 
 } // namespace enchanter::glyph

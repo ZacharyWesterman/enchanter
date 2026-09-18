@@ -17,7 +17,8 @@ CC = g++
 LFLAGS = $(RLDIR)/lib/libraylib.a -lGL -lm -lpthread -ldl -lrt -lX11
 CFLAGS = -I$(RLDIR)/include -std=$(CPP_STD) \
 	-W -Wall -Wextra -Werror \
-	-pedantic -fexceptions
+	-pedantic -fexceptions \
+	-Wno-narrowing
 
 # Make sure the build target is valid
 ifeq (,$(findstring $(TARGET) , $(VALID_TARGETS) ))
